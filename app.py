@@ -240,7 +240,7 @@ with tab1:
         # Trendline
         if len(trend) >= 3:
             x_num = np.arange(len(trend))
-            coeffs = np.polyfit(x_num, trend["mttd_median"].fillna(method="ffill"), 1)
+            coeffs = np.polyfit(x_num, trend["mttd_median"].ffill(), 1)
             tl = np.poly1d(coeffs)(x_num)
             fig_mttd.add_trace(go.Scatter(
                 x=trend[time_col], y=tl,
@@ -285,7 +285,7 @@ with tab1:
                 annotation_font=dict(color=SEV_COLORS[sev], size=10),
             )
         if len(trend) >= 3:
-            coeffs2 = np.polyfit(x_num, trend["mttr_median"].fillna(method="ffill"), 1)
+            coeffs2 = np.polyfit(x_num, trend["mttr_median"].ffill(), 1)
             tl2 = np.poly1d(coeffs2)(x_num)
             fig_mttr.add_trace(go.Scatter(
                 x=trend[time_col], y=tl2,
