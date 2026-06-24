@@ -473,15 +473,19 @@ with tab3:
 
     st.subheader("Analyst performance — median MTTR")
     if "analyst" in df.columns:
+        agg_dict = dict(median_mttr=("mttr_min","median"), total_incidents=("mttr_min","count"))
+        if "sla_resolve_met" in df.columns:
+            agg_dict["sla_rate"] = ("sla_resolve_met","mean")
         analyst_df = (
             df.groupby("analyst")
-              .agg(median_mttr=("mttr_min","median"),
-                   total_incidents=("mttr_min","count"),
-                   sla_rate=("sla_resolve_met","mean"))
+              .agg(**agg_dict)
               .reset_index()
               .sort_values("median_mttr")
         )
-        analyst_df["sla_rate"] = (analyst_df["sla_rate"] * 100).round(1)
+        if "sla_rate" in analyst_df.columns:
+            analyst_df["sla_rate"] = (analyst_df["sla_rate"] * 100).round(1)
+        else:
+            analyst_df["sla_rate"] = None
         analyst_df["median_mttr_fmt"] = analyst_df["median_mttr"].apply(fmt_min)
         st.dataframe(
             analyst_df[["analyst","total_incidents","median_mttr_fmt","sla_rate"]].rename(columns={
